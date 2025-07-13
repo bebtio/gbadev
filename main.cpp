@@ -16,6 +16,7 @@ int main(void)
 	volatile unsigned short *vram = (unsigned short *)0x06000000;
 
 
+    // Define radius and initial position of line.
     int r = 50;
     float deg = 0;
     int x = r*cos( deg * 3.14159 / 180.0 );
@@ -23,18 +24,21 @@ int main(void)
 
     while(true)
     {
+        // Draw the line.
         screen.drawLine(
         GBAScreen::height/2,
         GBAScreen::width/2,
         GBAScreen::height/2+y,
         GBAScreen::width/2+x, 0xffff);
         
+        // Rotate the line positions.
         deg += 0.8;
         x = r*cos( deg * 3.14159 / 180.0 );
         y = r*sin( deg * 3.14159 / 180.0 );
 
         screen.drawPixelAt(GBAScreen::height/2, GBAScreen::width/2, 0xff00);
         
+        // Reset the drawing when the circle comes... full circle.
         if( deg > 360 )
         {
             screen.clear();
