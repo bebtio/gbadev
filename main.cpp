@@ -27,14 +27,12 @@ int main(void)
     float f = 0.01;
 
     unsigned char c = 0;
+    screen.drawLine(0,0,150,50);
     while(true)
     {
         c += 1;
-        screen.writeAt(GBAScreen::height/2-1, GBAScreen::width/2 - 5, 0x001F + c);
-        screen.writeAt(GBAScreen::height/2-1, GBAScreen::width/2 + 0, 0x03E0 + c << 4);
-        screen.writeAt(GBAScreen::height/2-1, GBAScreen::width/2 + 5, 0x7C00 + c << 8);
+        screen.drawPixelAt(GBAScreen::height/2, GBAScreen::width/2, 0xffff);
     }
-//    tic.clear();
         
 
 
