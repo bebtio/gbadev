@@ -21,7 +21,8 @@ public:
     }
 
     inline void drawLine( unsigned int startY, unsigned int startX, 
-                          unsigned int stopY,  unsigned int stopX )
+                          unsigned int stopY,  unsigned int stopX,
+                          unsigned short color = 0xffff )
 
     {
         float sizeX     = (float)stopX  - (float)startX;
@@ -39,7 +40,7 @@ public:
 
         while( true )
         {
-            drawPixelAt(startY + dy, startX + dx, 0x310);
+            drawPixelAt(startY + dy, startX + dx, color);
 
             if( (int)(startX + dx) != (int)stopX )
             {

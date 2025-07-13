@@ -1,6 +1,7 @@
 #include "GBAScreen.hpp"
 #include <gba.h>
 #include <gba_console.h>
+#include <cmath>
 
 int main(void)
 {
@@ -13,29 +14,33 @@ int main(void)
 
 	// Write pixel colours into VRAM
 	volatile unsigned short *vram = (unsigned short *)0x06000000;
-	// Wait forever
-    float pos = 0;
-    float vel = 0.1;
-    
-    int count = 0;
 
 
-    float r = .0005;
-    float x = 0;
+    int r = 50;
+    float deg = 0;
+    int x = r*cos( deg * 3.14159 / 180.0 );
+    int y = r*sin( deg * 3.14159 / 180.0 );
 
-    float T = 0;
-    float f = 0.01;
-
-    unsigned char c = 0;
-    screen.drawLine(0,0,159,159);
     while(true)
     {
-        c += 1;
-        screen.drawPixelAt(GBAScreen::height/2, GBAScreen::width/2, 0xffff);
-
-    }
+        screen.drawLine(
+        GBAScreen::height/2,
+        GBAScreen::width/2,
+        GBAScreen::height/2+y,
+        GBAScreen::width/2+x, 0xffff);
         
+        deg += 0.8;
+        x = r*cos( deg * 3.14159 / 180.0 );
+        y = r*sin( deg * 3.14159 / 180.0 );
 
+        screen.drawPixelAt(GBAScreen::height/2, GBAScreen::width/2, 0xff00);
+        
+        if( deg > 360 )
+        {
+            screen.clear();
+            deg = 0;
+        }
+    }
 
 	return 0;
 }
