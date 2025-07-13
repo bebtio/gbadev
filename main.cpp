@@ -27,11 +27,12 @@ int main(void)
     float f = 0.01;
 
     unsigned char c = 0;
-    screen.drawLine(0,0,150,50);
+    screen.drawLine(0,0,159,159);
     while(true)
     {
         c += 1;
         screen.drawPixelAt(GBAScreen::height/2, GBAScreen::width/2, 0xffff);
+
     }
         
 

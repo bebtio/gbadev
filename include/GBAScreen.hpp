@@ -20,45 +20,46 @@ public:
         memset((unsigned short*)vram,0, width*height*sizeof(unsigned short));
     }
 
-    inline void drawLine( unsigned int startHeightPos, unsigned int startWidthPos, 
-                          unsigned int stopHeightPos,  unsigned int stopWidthPos )
+    inline void drawLine( unsigned int startY, unsigned int startX, 
+                          unsigned int stopY,  unsigned int stopX )
 
     {
-        float widthStep  = (float)stopWidthPos  - (float)startWidthPos;
-        float heightStep = (float)stopHeightPos - (float)startHeightPos;
-        float n = sqrt(widthStep*widthStep + heightStep*heightStep);
+        float sizeX     = (float)stopX  - (float)startX;
+        float sizeY     = (float)stopY - (float)startY;
+        float magnitude = sqrt(sizeX*sizeX + sizeY*sizeY);
 
-        widthStep = widthStep/n;
-        heightStep = heightStep/n;
+        float normX = sizeX/magnitude;
+        float normY = sizeY/magnitude;
 
-        float width  = 0;
-        float height = 0;
+        float dx = 0;
+        float dy = 0;
 
-        bool widthDone = false;
-        bool heightDone = false;
+        bool xDone = false;
+        bool yDone = false;
+
         while( true )
         {
-            if( (int)(startHeightPos + height) != (int)stopHeightPos )
+            drawPixelAt(startY + dy, startX + dx, 0x310);
+
+            if( (int)(startX + dx) != (int)stopX )
             {
-                height += heightStep;
+                dx  += normX;
             }
             else
             {
-                heightDone = true;
+                xDone = true;
             }
 
-            if( (int)(startWidthPos + width) != (int)stopWidthPos )
+            if( (int)(startY + dy) != (int)stopY )
             {
-                width  += widthStep;
+                dy += normY;
             }
             else
             {
-                widthDone = true;
+                yDone = true;
             }
 
-            drawPixelAt(startHeightPos + height, startWidthPos + width, 0x310);
-
-            if( widthDone && heightDone )
+            if( xDone && yDone )
             {
                 break;
             }
