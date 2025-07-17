@@ -1,7 +1,10 @@
 #include "GBAScreen.hpp"
-#include <gba.h>
-#include <gba_console.h>
 #include <cmath>
+
+extern "C"
+{
+#include "tonc.h"
+}
 
 int main(void)
 {
@@ -22,8 +25,14 @@ int main(void)
     int x = r*cos( deg * 3.14159 / 180.0 );
     int y = r*sin( deg * 3.14159 / 180.0 );
 
+    m3_putc(0,0,1,0xffff);
     while(true)
     {
+        // Rotate the line positions.
+        deg += 1;
+        x = r*cos( deg * 3.14159 / 180.0 );
+        y = r*sin( deg * 3.14159 / 180.0 );
+
         // Draw the line.
         screen.drawLine(
         GBAScreen::height/2,
@@ -31,15 +40,11 @@ int main(void)
         GBAScreen::height/2+y,
         GBAScreen::width/2+x, 0xffff);
         
-        // Rotate the line positions.
-        deg += 0.8;
-        x = r*cos( deg * 3.14159 / 180.0 );
-        y = r*sin( deg * 3.14159 / 180.0 );
 
         screen.drawPixelAt(GBAScreen::height/2, GBAScreen::width/2, 0xff00);
         
         // Reset the drawing when the circle comes... full circle.
-        if( deg > 360 )
+        if( deg > 359 )
         {
             screen.clear();
             deg = 0;
