@@ -1,5 +1,7 @@
 #include "cstring"
 #include "cmath"
+#include "tonc_math.h"
+#include <vector>
 class GBAScreen 
 {
 
@@ -20,8 +22,8 @@ public:
         memset((unsigned short*)vram,0, width*height*sizeof(unsigned short));
     }
 
-    inline void drawLine( unsigned int startY, unsigned int startX, 
-                          unsigned int stopY,  unsigned int stopX,
+    inline void drawLine( unsigned int startX, unsigned int startY, 
+                          unsigned int stopX,  unsigned int stopY,
                           unsigned short color = 0xffff )
 
     {
@@ -67,6 +69,47 @@ public:
         }
     }
 
+
+    void drawRect(unsigned int x1, unsigned int y1,
+                  unsigned int x2, unsigned int y2,
+                  unsigned short color = 0xffff
+                 )
+    {
+        drawLine(x1, y1, x2, y1, color);
+        drawLine(x1, y2, x2, y2, color);
+        drawLine(x1, y1, x1, y2, color);
+        drawLine(x2, y1, x2, y2, color);
+    }
+
+    void drawRectAt(
+                        unsigned int x1, unsigned int y1, 
+                        unsigned int width, unsigned int height,
+                        unsigned short color = 0xffff
+                   )
+    {
+        drawRect(x1,y1, x1+width, y1+height, color);        
+    }
+
+    void drawCircle( 
+                        unsigned int radius,
+                        unsigned int x,
+                        unsigned int y,
+                        unsigned short color = 0xffff )
+    {
+        // Rotate the line positions.
+        int xPos = 0;
+        int yPos = 0;
+
+        for(unsigned int deg = 1; deg < 360; deg++ )
+        {
+            xPos = x + (radius) * (cos( deg * 3.14159 / 180));
+            yPos = y + (radius) * (sin( deg * 3.14159 / 180));
+            drawPixelAt(
+                yPos,
+                xPos,
+                color);
+        }
+    }
 
     static const unsigned int height = 160;
     static const unsigned int width  = 240;
