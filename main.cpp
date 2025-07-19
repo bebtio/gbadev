@@ -8,6 +8,8 @@ extern "C"
 
 int main(void)
 {
+
+    // Initialize TTE for Mode 3 with default font and settings
     GBAScreen screen;
 
 	// Write into the I/O registers, setting video display parameters.
@@ -25,30 +27,48 @@ int main(void)
     int x = r*cos( deg * 3.14159 / 180.0 );
     int y = r*sin( deg * 3.14159 / 180.0 );
 
-    m3_putc(0,0,1,0xffff);
+    int xPos = 50;
+    int yPos = 50;
+    int xVel = 1;
+    int yVel = 1;
+
+
+    int radius = 20;
     while(true)
     {
-        // Rotate the line positions.
-        deg += 1;
-        x = r*cos( deg * 3.14159 / 180.0 );
-        y = r*sin( deg * 3.14159 / 180.0 );
 
-        // Draw the line.
-        screen.drawLine(
-        GBAScreen::height/2,
-        GBAScreen::width/2,
-        GBAScreen::height/2+y,
-        GBAScreen::width/2+x, 0xffff);
-        
-
-        screen.drawPixelAt(GBAScreen::height/2, GBAScreen::width/2, 0xff00);
-        
-        // Reset the drawing when the circle comes... full circle.
-        if( deg > 359 )
+        //screen.drawRectAt(xPos, yPos, 10, 10);
+       
+        for(int i = 0; i < 100; i++)
         {
-            screen.clear();
-            deg = 0;
+
         }
+
+        if( xPos + radius > 239 )
+        {
+            xVel = -1;
+        }
+        else if( xPos - radius <= 0 )
+        {
+            xVel = 1;
+        }
+
+        if( yPos + radius > 159 )
+        {
+            yVel = -1;
+        }
+        else if( yPos - radius <= 0 )
+        {
+            yVel = 1;
+        }
+
+        xPos = xPos + xVel;
+        yPos = yPos + yVel;
+
+
+        screen.clear();
+        screen.drawCircle(radius, xPos, yPos);
+        screen.update();
     }
 
 	return 0;

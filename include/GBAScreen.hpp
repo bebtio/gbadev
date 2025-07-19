@@ -6,20 +6,28 @@ class GBAScreen
 {
 
 public:
-    GBAScreen(){}
+    GBAScreen(){ currBuffer = frameBuffer1;}
+
+    inline void update()
+    {
+        memcpy((unsigned short*)vram, currBuffer, sizeof(unsigned short)*width*height);
+    }
 
     inline void fill(unsigned short color)
     {
-        memset((unsigned short*)vram,color, width*height*sizeof(unsigned short));
+        memset((unsigned short*)currBuffer,color, width*height*sizeof(unsigned short));
     }
+
     inline void drawPixelAt( unsigned int heightPos, unsigned int widthPos, unsigned short color )
     {
-        vram[heightPos*width + widthPos] = color;
+        //vram[heightPos*width + widthPos] = color;
+        currBuffer[heightPos*width + widthPos] = color;
+        
     }
 
     inline void clear()
     {
-        memset((unsigned short*)vram,0, width*height*sizeof(unsigned short));
+        memset((unsigned short*)currBuffer,0, width*height*sizeof(unsigned short));
     }
 
     inline void drawLine( unsigned int startX, unsigned int startY, 
@@ -70,7 +78,7 @@ public:
     }
 
 
-    void drawRect(unsigned int x1, unsigned int y1,
+    inline void drawRect(unsigned int x1, unsigned int y1,
                   unsigned int x2, unsigned int y2,
                   unsigned short color = 0xffff
                  )
@@ -81,7 +89,7 @@ public:
         drawLine(x2, y1, x2, y2, color);
     }
 
-    void drawRectAt(
+    inline void drawRectAt(
                         unsigned int x1, unsigned int y1, 
                         unsigned int width, unsigned int height,
                         unsigned short color = 0xffff
@@ -90,20 +98,19 @@ public:
         drawRect(x1,y1, x1+width, y1+height, color);        
     }
 
-    void drawCircle( 
+    inline void drawCircle( 
                         unsigned int radius,
                         unsigned int x,
                         unsigned int y,
                         unsigned short color = 0xffff )
     {
         // Rotate the line positions.
-        int xPos = 0;
-        int yPos = 0;
-
-        for(unsigned int deg = 1; deg < 360; deg++ )
+        unsigned int theta = 0;
+        for(unsigned int deg = 0; deg < 360 * 2 ; deg++ )
         {
-            xPos = x + (radius) * (cos( deg * 3.14159 / 180));
-            yPos = y + (radius) * (sin( deg * 3.14159 / 180));
+            theta = (deg << 7);
+            float xPos = x + (radius) * (lu_cos(theta) / 4096.0f);
+            float yPos = y + (radius) * (lu_sin(theta) / 4096.0f);
             drawPixelAt(
                 yPos,
                 xPos,
@@ -115,6 +122,18 @@ public:
     static const unsigned int width  = 240;
 
 private:
+
+    enum currentBuffer
+    {
+        buffer1 = 0,
+        buffer2 = 1
+    };
+
+    currentBuffer cb;
+
+    unsigned short *currBuffer;
+    unsigned short frameBuffer1[height*width];
+    unsigned short frameBuffer2[height*width];
 
     volatile unsigned char  *ioram = (unsigned char*)  0x04000000;
 	volatile unsigned short *vram  = (unsigned short *)0x06000000;
