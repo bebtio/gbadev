@@ -6,11 +6,21 @@ class GBAScreen
 {
 
 public:
-    GBAScreen(){ currBuffer = frameBuffer1;}
+    GBAScreen(){}
 
     inline void update()
     {
         memcpy((unsigned short*)vram, currBuffer, sizeof(unsigned short)*width*height);
+        if( cb == buffer1 )
+        {
+            currBuffer = frameBuffer1;
+            cb = buffer2;
+        }
+        else if( cb == buffer2 )
+        {
+            currBuffer = frameBuffer2;
+            cb = buffer1;
+        }
     }
 
     inline void fill(unsigned short color)
