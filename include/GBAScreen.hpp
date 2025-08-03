@@ -1,12 +1,25 @@
-#include "cstring"
-#include "cmath"
-#include "tonc_math.h"
-#include <vector>
+#include <string.h>
+#include <cmath>
+
+extern "C"
+{
+    #include "tonc.h"
+}
 class GBAScreen 
 {
 
 public:
-    GBAScreen(){}
+    GBAScreen()
+    {
+	    ioram[0] = 0x03; // Use video mode 3 (in BG2, a 16bpp bitmap in VRAM)
+	    ioram[1] = 0x04; // Enable BG2 (BG0 = 1, BG1 = 2, BG2 = 4, ...)
+        
+        memset((unsigned short*)frameBuffer1, 0, width*height*sizeof(unsigned short));
+        memset((unsigned short*)frameBuffer2, 0, width*height*sizeof(unsigned short));
+        memset((unsigned short*)vram, 0, width*height*sizeof(unsigned short));
+        cb = buffer1;
+        currBuffer = frameBuffer1;
+    }
 
     inline void update()
     {
@@ -28,10 +41,9 @@ public:
         memset((unsigned short*)currBuffer,color, width*height*sizeof(unsigned short));
     }
 
-    inline void drawPixelAt( unsigned int heightPos, unsigned int widthPos, unsigned short color )
+    inline void drawPixelAt( unsigned int y, unsigned int x, unsigned short color )
     {
-        //vram[heightPos*width + widthPos] = color;
-        currBuffer[heightPos*width + widthPos] = color;
+        currBuffer[y*width + x] = color;
         
     }
 
@@ -105,7 +117,7 @@ public:
                         unsigned short color = 0xffff
                    )
     {
-        drawRect(x1,y1, x1+width, y1+height, color);        
+        drawRect(x1,y1, x1+width-1, y1+height-1, color);        
     }
 
     inline void drawCircle( 

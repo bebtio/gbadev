@@ -1,10 +1,6 @@
 #include "GBAScreen.hpp"
-#include <cmath>
 
-extern "C"
-{
-#include "tonc.h"
-}
+
 
 int main(void)
 {
@@ -12,63 +8,63 @@ int main(void)
     // Initialize TTE for Mode 3 with default font and settings
     GBAScreen screen;
 
-	// Write into the I/O registers, setting video display parameters.
-	volatile unsigned char *ioram = (unsigned char *)0x04000000;
-	ioram[0] = 0x03; // Use video mode 3 (in BG2, a 16bpp bitmap in VRAM)
-	ioram[1] = 0x04; // Enable BG2 (BG0 = 1, BG1 = 2, BG2 = 4, ...)
-
-	// Write pixel colours into VRAM
-	volatile unsigned short *vram = (unsigned short *)0x06000000;
-
-
     // Define radius and initial position of line.
-    int r = 50;
-    float deg = 0;
-    int x = r*cos( deg * 3.14159 / 180.0 );
-    int y = r*sin( deg * 3.14159 / 180.0 );
-
-    int xPos = 50;
-    int yPos = 50;
-    int xVel = 1;
-    int yVel = 1;
 
 
-    int radius = 20;
+    int dx = 1;
+    int dy = 1;
+
+    int sz = 10;
+
+    int x = screen.width-sz;
+    int y = screen.height-sz;
     while(true)
     {
-
-        //screen.drawRectAt(xPos, yPos, 10, 10);
-       
-        for(int i = 0; i < 100; i++)
+        key_poll();
+        if(key_is_down(KEY_RIGHT))
         {
-
+            x += dx;
         }
 
-        if( xPos + radius > 239 )
+        if(key_is_down(KEY_LEFT))
         {
-            xVel = -1;
-        }
-        else if( xPos - radius <= 0 )
-        {
-            xVel = 1;
+            x -= dx;
         }
 
-        if( yPos + radius > 159 )
+        if(key_is_down(KEY_UP))
         {
-            yVel = -1;
-        }
-        else if( yPos - radius <= 0 )
-        {
-            yVel = 1;
+            y -= dy;
         }
 
-        xPos = xPos + xVel;
-        yPos = yPos + yVel;
+        if(key_is_down(KEY_DOWN))
+        {
+            y += dy;
+        }
 
+
+        if( x <= 0 )
+        {
+            x = 0;
+        }
+
+        if( y <= 0)
+        {
+            y = 0;
+        }
+
+        if( (x+sz) >= screen.width )
+        {
+            x = screen.width - sz  ;
+        }
+
+        if( (y+sz) >= screen.height )
+        {
+            y = screen.height - sz ;
+        }
+        screen.drawRectAt(x, y, sz,sz);
+        screen.update();
 
         screen.clear();
-        screen.drawCircle(radius, xPos, yPos);
-        screen.update();
     }
 
 	return 0;
